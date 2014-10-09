@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<script>
+		if (!(localStorage.getItem('session_id') && localStorage.getItem('user_id'))) {
+			window.location.href="login.html";
+		}
+	</script>
+	<script src="js/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<head>
+		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Exo+2:400,100,200' rel='stylesheet' type='text/css'>
+		<script src="phonegap.js" type="text/javascript"></script>
+		 <script type="text/javascript" src="cordova.js"></script>
+	</head>
+	<body>
+		<div id="meldung"></div>
+		<div class="logo">
+			Quiz
+		</div>
+		
+		<div class="wrapper-menu">
+			<div id="element">
+				<div id="element2"></div>
+				<!--Hier wird das JSON eingefügt-->
+			</div>
+			<div class="wrapper-menu-inner">
+				<hr>
+				<a onclick="shuffle()" href="#"><div>Spielen</div></a>
+				<a href="kategorien.html"><div>Kategorie wählen</div></a>
+				<a href="#" onclick="randomCategory()"><div>Zufällige Kategorie spielen</div></a>
+				<hr>
+				<a href="editor_category.html"><div>Kategorie erstellen</div></a>
+				<a href="editor_question.html"><div>Frage erstellen</div></a>
+				<a href="#" onclick="logout()"><div>Abmelden</div></a>
+			</div>
+		</div>
+
+	
+	<script>
+		$(document).ready(
+			function(){
+				// alert(localStorage.category_title);
+				var category = localStorage.category_title;
+				if (localStorage.category==null) category = "Keine Kategorie gewählt";
+				$('#element').prepend("<div><img src='img/west.png' alt='"+localStorage.username+"'></div><a href='#'><div class='menu_username nopointer'>Eingeloggt als:</div></a><a href='#'><div class='menu_username bold nopointer'  style='margin-bottom:5px;'>"+localStorage.username+"&nbsp;("+localStorage.role+")</div></a>")
+				$('#element2').append("<a href='#'><div class='menu_username nopointer'>"+localStorage.points+"&nbsp;Punkte</div></a>"+
+						"<a href='#'><div class='menu_username nopointer'>"+localStorage.total_questions+"&nbsp;gespielte Fragen</div></a>");
+			}
+		);
+
+		$(document).ready(
+			function(){
+				var category_id = localStorage.getItem('category_id');
+				// alert(category_id); //debug
+				$.ajax({
+					type: "GET",
+					url: "http://marcelkipp.com/quizapp/category_ausgabe.php?category_id="+category_id,
+					async: false,
+					dataType: "json",
+					success: function(data){
+						var category_title = data.category_title;
+						localStorage.setItem('category_title', data.category_title);
+						// alert(category_title);
+						// alert(data.category_title); //debug
+						$("#element").append("<a href='#'><div class='menu_username nopointer' id='category_title'>Aktuelle Kategorie:&nbsp;"+data.category_title+"</div></a><i id='refresher' onClick='refreshuserinfo()' class='fa fa-refresh refresh'></i>");
+					}
+				});
+			}
+		);
+
+		function selectcategory(category_id){
+			var postdata = 'user_id='+localStorage.getItem('user_id')+'&session_id='+localStorage.getItem('session_id')+'&category_id='+category_id;
+			var user_id = localStorage.getItem('user_id');
+			var session_id = localStorage.getItem('session_id');
+			var category_id = localStorage.getItem('category_id');
+			alert(user_id); //debug
+			alert(session_id); //debug
+			alert(category_id); //debug
+			window.location.href="menu.html";
+		}
+
+		function randomXToY(min, max){
+		    return Math.floor(Math.random() * (max - min + 1)) + min
+		}
+
+		function randomCategory(){
+			$('#refresher').addClass("fa-spin");
+			$.ajax({
+				url: 'http://marcelkipp.com/quizapp/categories.php',
+				dataType: 'json',
+				type: 'get',
+				cache: false,
+				success:function(data) {
+					var sample = randomXToY(0, data.length-1);
+					var category_id = data[sample].category_id;
+					var user_id = localStorage.getItem('user_id');
+					// localStorage.setItem('category_id',category_id);
+					// alert(category_id);  //debug
+					// alert(category_id2); //debug
+					$.ajax({
+						type: "get",
+						url: "http://marcelkipp.com/quizapp/saveshufflecategory.php?user_id="+user_id+"&category_id="+category_id,
+						async: false,
+						success: function(){
+							// alert('gepeichert'); //debug 
+						}
+					})
+					refreshuserinfo();
+				}
+			});
+		}
+	
+		function logout(){
+			localStorage.clear();
+			console.log('localStorage gelöscht');
+			window.location.href="login.html";
+		}
+
+		function shuffle(){
+			var category_id = localStorage.getItem('category_id');
+			// alert(category_id); //debug
+
+			$.ajax({
+				type: "GET",
+				url: "http://marcelkipp.com/quizapp/shuffle.php?category_id="+category_id,
+				async: false,
+				dataType: "json",
+				success: function(data){
+					localStorage.setItem("question_id", data.question_id);
+					var question_id = localStorage.getItem("question_id");
+					// alert(question_id);//debug
+					window.location.href="index.html";
+				}
+			});
+		}
+
+	function refreshuserinfo(){
+		// alert(localStorage.getItem('category_title')); //debug 
+		var user_id = localStorage.getItem('user_id');
+		$('#refresher').addClass("fa-spin");
+		setTimeout(function(){$('#refresher').removeClass('fa-spin');},3000);
+
+		$.ajax({
+			type: "GET",
+			url: "http://marcelkipp.com/quizapp/userinfo.php?user_id="+user_id,
+			async: false,
+			dataType: "json",
+			success: function(data){
+				var category = data.category_title;
+				var atext = "Keine Kategorie gewählt";
+				// alert(category); //debug
+
+				if (category==null) data.category_title = atext;
+				localStorage.setItem('points', data.points);
+				localStorage.setItem('total_questions',data.number_pq);
+				localStorage.setItem('category_title', data.category_title);
+
+				// alert(localStorage.getItem('category_title')); //debug 
+				
+				$('#category_title').empty();
+				$('#category_title').append("Aktuelle Kategorie:"+ category);
+				$('#element2').empty();
+				$('#element2').append("<a href='#'><div class='menu_username nopointer'>"+localStorage.points+"&nbsp;Punkte</div></a>"+
+					"<a href='#'><div class='menu_username nopointer'>"+localStorage.total_questions+"&nbsp;gespielte Fragen</div></a>");
+			}
+		});
+	}
+	</script>	
+</body>
+</html>

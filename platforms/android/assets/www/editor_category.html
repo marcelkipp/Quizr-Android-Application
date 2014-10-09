@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Exo+2:400,100,200' rel='stylesheet' type='text/css'>
+		<script src="phonegap.js" type="text/javascript"></script>
+		<script type="text/javascript" src="cordova.js"></script>
+	</head>
+
+	<body>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script>
+			function createcategory (){
+				var form = $('#createcategory').serialize();
+				$.ajax ({
+					url:'backend/create_category.php',
+					data: form,
+					dataType: 'json',
+					type: 'post',
+					cache: false,
+					success:function(data) {
+						console.log(data);
+							console.log('JSON erfolgreich ausgelesen!');
+							console.log('category_title='+data.category_title);
+							console.log('category_title='+data.category_description);
+							window.location.href="kategorien.html";
+					},
+					error:function(data) {
+						console.log('Erstellung neuer Kategorie fehlgeschlagen!');
+					}
+				});
+			}
+		</script>
+
+
+		<form class="wrapper-anmeldung" id="createcategory">
+			<input type="text" placeholder="Titel der Kategorie" id="category_title" name="category_title"><br/>
+			<textarea type="text" placeholder="Beschreibung der Kategorie" id="category_description" name="category_description"></textarea><br>
+			<!--BUTTON-->
+			<input class="anmelde-button" type="button" value="Kategorie erstellen" onclick="createcategory()"/>
+		</form>
+	</body>
+
+
+</html>

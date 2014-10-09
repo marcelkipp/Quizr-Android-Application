@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Loading</title>
+
+    <script type="text/javascript" charset="utf-8" src="phonegap-1.4.1.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" charset="utf-8">
+    $(document).bind("ready", function() {
+        $.support.cors = true;
+        test();
+    });
+    $(document).ready(
+	    function(){
+	    	var user_id = localStorage.getItem('user_id');
+	    	request = new XMLHttpRequest();
+			request.open('GET', 'http://marcelkipp.com/quizapp/userinfo.php?user_id='+user_id, true);
+
+			request.onreadystatechange = function() {
+		 		if (this.readyState === 4){
+		   			if (this.status >= 200 && this.status < 400){ // Success!
+		      			data = JSON.parse(this.responseText);
+		      			// alert(resp);//debug all data
+
+		      			var username = data.username;
+		      			var role = data.role;
+		      			var category_id = data.category_id;
+		      			var points = data.points;
+		      			var number_pq = data.number_pq;
+		      			var avatar = data.avatar;
+		      			var total_questions = data.total_questions;
+
+		      			localStorage.setItem('username', username);
+		      			localStorage.setItem('role', role);
+		      			localStorage.setItem('category_id', category_id);
+		      			localStorage.setItem('points', points);
+		      			localStorage.setItem('number_pq', number_pq);
+		      			localStorage.setItem('avatar', avatar);
+		      			localStorage.setItem('total_questions', total_questions);
+
+		      			// alert(username);//debug
+		      			// alert(role);//debug
+		      			// alert(category_id);//debug
+		      			// alert(points);//debug
+		      			// alert(number_pq);//debug
+		      			// alert(total_questions); //debug
+
+		      			// alert(localStorage.getItem('username'));//debug
+		      			// alert(localStorage.getItem('role'));//debug
+		      			// alert(localStorage.getItem('category_id'));//debug
+		      			// alert(localStorage.getItem('points'));//debug
+		      			// alert(localStorage.getItem('number_pq'));//debug
+		      			// alert(localStorage.getItem('avatar'));//debug
+
+		      			setTimeout(function(){
+		      				window.location.href="menu.html";
+		      			}, 2000);
+		      			
+		    		} else { // Error :(
+		      			alert('Error'); //debug
+		    		}
+		  		}
+			};
+
+		request.send();
+		request = null;
+   		}
+    );
+
+	// function hallo(){
+	// 	// alert(localStorage.getItem('user_id')); //debug
+	// 	var user_id = localStorage.getItem('user_id');
+	// 	$.ajax({
+	// 		type: "GET",
+	// 		url: "http://marcelkipp.com/quizappp/userinfo2.php?user_id="+user_id,
+	// 		dataType: "json",
+	// 		cache: false,
+	// 		success: function(data){
+	// 			alert('success');
+
+	// 			localStorage.setItem('username', data.username);
+	// 			localStorage.setItem('role', data.role);
+	// 			localStorage.setItem('points',data.points);
+	// 			localStorage.setItem('total_questions', data.number_pq);
+	// 			localStorage.setItem('category_title', data.category_title);
+				
+	// 			var username = localStorage.getItem("username");
+	// 			var role = localStorage.getItem("role");
+	// 			var points = localStorage.getItem("points");
+	// 			var total_questions = localStorage.getItem("total_questions");
+	// 			var category_title = localStorage.getItem("category_title");
+
+	// 			 alert(username); // debug
+	// 			 alert(role); //debug
+	// 			 alert(points); //debug
+	// 			 alert(total_questions); //debug
+	// 			 alert(category_title); //debug
+	// 			 alert(data.username); //debug
+	// 			 alert(data.role); //debug
+	// 			 alert(data.points); //debug
+	// 			 alert(data.number_pq); //debug
+	// 			 alert(data.category_title); //debug
+	// 		}
+	// 	});
+	// }
+
+
+    </script>
+  </head>
+  <body>
+    <div class="spinner">
+		  <div class="rect1"></div>
+		  <div class="rect2"></div>
+		  <div class="rect3"></div>
+		  <div class="rect4"></div>
+		  <div class="rect5"></div>
+		</div>
+		<div style="margin:0px auto;text-align:center;color:#ffffff;">loading userdata</div>
+  </body>
+</html>

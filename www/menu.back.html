@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Exo+2:400,100,200' rel='stylesheet' type='text/css'>
+	</head>
+	<body>
+		
+		<div class="logo">
+			Quiz
+		</div>
+		
+		<div class="wrapper-menu">
+			<div id="element">
+				<!--Hier wird das JSON eingefügt-->
+			</div>
+			<div class="wrapper-menu-inner">
+				<hr>
+				<a href="kategorien.html"><div>Kategorie wählen</div></a>
+				<a href="index.html"><div>Zufällige Kategorie spielen</div></a>
+				<hr>
+				<a href="#"><div>Statistiken</div></a>
+				<!--<a href="login.html" id="abmelden"><div>Abmelden</div></a>-->
+			</div>
+		</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script>
+		$( document ).ready(function (){
+			console.log('document ready!')
+			$.ajax ({
+				url:'http://localhost/quiz-backend/userinfo.php?user_id='+localStorge.getItem('user_id'),
+				dataType: 'json',
+				type: 'post',
+				cache: false,
+				success:function(data) {
+					i=1;
+					$(data).each(function(value){
+						console.log('JSON erfolgreich ausgelesen!');
+						$('#element').append( 
+								$("<div><img src='img/west.png' alt='"+value.username+"'></div>"+
+									"<a href='#'><div class='menu_username nopointer'>Eingeloggt als:</div></a>"+
+									"<a href='#'><div class='menu_username bold nopointer'  style='margin-bottom:5px;'>"+value.username+"&nbsp;("+value.role+")</div></a>"+
+									"<a href='#'><div class='menu_username nopointer'>"+value.points+"&nbsp;Punkte</div></a>"+
+									"<a href='#'><div class='menu_username nopointer'>"+value.total_questions+"&nbsp;gespielte Fragen</div></a>"+
+									"<a href='#'><div class='menu_username nopointer'>Aktuelle Kategorie:&nbsp;"+value.category+"</div></a>"
+								)
+							);
+					i++;
+					});
+				}
+			});
+		});
+	</script>
+	</body>
+</html>

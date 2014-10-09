@@ -1,0 +1,120 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Exo+2:400,100,200' rel='stylesheet' type='text/css'>
+		<script src="phonegap.js" type="text/javascript"></script>
+		 <script type="text/javascript" src="cordova.js"></script>
+	</head>
+
+	<body>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script>
+		//	function createquestion (){
+		//		var form = $('#createquestion').serialize();
+		//		$.ajax ({
+		//			url:'http://localhost/quiz-backend/create_question.php',
+		//		cache: false,
+		//				//console.log(data);
+		//				//	console.log('question_id='+data.question_id);
+		//				//	console.log('question_text='+data.question_text);
+						//	console.log('answer_id1='+data.answer_id1);
+						//	console.log('answer_id2='+data.answer_id2);
+						//	console.log('answer_id3='+data.answer_id3);
+						//	console.log('answer_id4='+data.answer_id4);
+						//	console.log('answer_explanation='+data.answer_explanation);
+						//	console.log('difficulty='+data.difficulty);
+		//					window.location.href="menu.html";
+		//			},
+		//			error:function(data) {
+		//				console.log('Erstellung einer neuen Frage fehlgeschlagen!');
+		//			}
+		//		});
+		//	}
+		</script>
+			
+		<script>
+		function createquestion (){	
+			$("#createquestion").submit(function(e) {
+			    var formObj = $(this);
+			    var formURL = formObj.attr("action");
+			    var formData = new FormData(this);
+			    $.ajax({
+			        url: 'backend/create_question.php',
+			    	type: 'post',
+			        data:  formData,
+			    	mimeType:"multipart/form-data",
+			   		contentType: false,
+			        cache: false,
+			        processData:false,
+			    	success:function(data) {
+						$(data).each(function(index,value){
+							console.log('bis hier hin kommt er!');
+							window.location.href="menu.html";
+						});
+				},     
+			});
+			  //  e.preventDefault(); //Prevent Default action.
+			  //  e.unbind();
+			});
+			$("#createquestion").submit(); //Submit the form
+		}
+		</script>
+
+
+		<script>
+		$( document ).ready(function () {
+			console.log('document ready!')
+			$.ajax({
+				url: 'backend/category_select_all.php',
+				dataType: 'json',
+				type: 'get',
+				cache: false,
+				enctype: 'multipart/form-data',
+				success:function(data) {
+					i = 1;
+					$(data).each(function(index,value){
+						console.log("JSON erfolgreich ausgelesen!");
+						$('#category').append( 
+							$("<option value='"+value.category_id+"'>"+value.category_title+"</option>")
+							);
+						i++;
+					});
+				}
+			});
+		});
+		</script>
+		<div class="error-meldung">Überprüfen Sie die Bilddatei! Sie entspricht nicht den Vorrausetzungen!</div>
+		<form method="post" class="wrapper-anmeldung" id="createquestion" enctype="multipart/form-data" action="backend/create_question.php">
+			<input type="text" placeholder="Frage" id="frage" name="question_text"><br/>
+			<div class="selectioncss">
+				<select name="category_id" id="category">
+				</select><br/>
+			</div>   
+		<hr/>
+			<input type="text" placeholder="Antwort 1" id="answer_id1" name="answer_id1"><br/>
+			<input type="text" placeholder="Erläuterung A1" id="answer_explanation" name="answer_explanation"><br/>
+			<hr/>
+			<input type="text" placeholder="Antwort 2" id="answer_id2" name="answer_id2"><br/>
+			<input type="text" placeholder="Antwort 3" id="answer_id3" name="answer_id3"><br/>
+			<input type="text" placeholder="Antwort 4" id="answer_id4" name="answer_id4"><br/>
+		<hr/>
+			<div class="selectioncss">
+				<select name="difficulty" id="difficulty">
+					<option value="Leicht">Leicht</option>
+					<option value="Normal">Normal</option>
+					<option value="Schwer">Schwer</option>
+				</select><br/>
+			</div>
+			
+			<input type="file" name="datei" value="durchsuchen"><br/><br/>
+			<span style="color:white;">Das Bild muss quadratisch sein, darf max. 10MB groß sein und das Dateiformat .gif .jpg .png besitzen<br/>(Es muss nicht zwingned ein Bild hochgeladen werden!) </span><br/><br/>
+			<input class="anmelde-button" type="button" value="Frage erstellen" onclick="createquestion()"/>
+		</form>
+	</body>
+
+
+</html>

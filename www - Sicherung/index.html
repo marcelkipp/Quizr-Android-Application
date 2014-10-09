@@ -1,0 +1,236 @@
+<html>
+	<script>
+		console.log('user_id='+localStorage.getItem('user_id'));
+		console.log('session_id='+localStorage.getItem('session_id'));
+		console.log('category_id='+localStorage.getItem('category_id'));
+		console.log('question_id='+localStorage.getItem('question_id'));
+		if(!(localStorage.getItem('session_id') && localStorage.getItem('user_id'))) {
+			window.location.href="login.html";
+		}
+		if(!(localStorage.getItem('question_id') && localStorage.getItem('category_id'))) {
+			window.location.href="menu.html";
+		}
+	</script>
+	<head>
+		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+		<meta charset="utf-8">
+		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/style.css">
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="phonegap.js" type="text/javascript"></script>
+		 <script type="text/javascript" src="cordova.js"></script>
+	</head>
+	<body>
+		<div class="wrapper jsc-sidebar-content jsc-sidebar-pulled">
+			<div class="frage">
+				<div class="headline" id="headline"></div>
+				<hr/>
+				<div class="frage-frage weight300" id="frage"/></div>
+				<div id="frage_bild"/></div>
+			</div>
+			<div id="fragen" class="fragen"></div>
+		</div>
+
+	 	<script type="text/javascript">
+	 		$(document).ready(
+	 			function(){
+	 				var category_id = localStorage.getItem('category_id');
+					// alert(category_id);
+					$.ajax({
+						type: 'GET',
+						url: 'http://marcelkipp.com/quizapp/category_ausgabe.php?category_id='+category_id,
+						dataType: 'json',
+						async: false,
+						success:function(data) {
+							// alert(data.category_title);
+							var category_title = data.category_title;
+							$("#headline").append(category_title);
+						}	
+					});
+
+	 				var question_id = localStorage.getItem('question_id');
+	 				$.ajax({
+	 					type: "GET",
+						url: "http://marcelkipp.com/quizapp/questioninfo.php?question_id="+question_id,
+						async: false,
+						dataType: "json",
+	 					success: function(data){
+	 						$('#frage').append(data.question_text);
+	 						$('#frage_bild').append('<div style="margin:0px auto; width:300px;height:300px;background-image:url(http://marcelkipp.com/quizapp/upload/'+data.media+'.jpg);"></div>');
+
+	 						var f1 = data.answer_id1;
+							var f2 = data.answer_id2;
+							var f3 = data.answer_id3;
+							var f4 = data.answer_id4;
+
+							var ff1 = "<a onClick='pluspoints()'><div class='antwort transparent-bg weight300' id='ff1'>"+f1+"</div></a>"
+							var ff2 = "<a onClick='plusnpqff2()'><div class='antwort transparent-bg weight300' id='ff2'>"+f2+"</div></a>"
+							var ff3 = "<a onClick='plusnpqff3()'><div class='antwort transparent-bg weight300' id='ff2'>"+f3+"</div></a>"
+							var ff4 = "<a onClick='plusnpqff4()'><div class='antwort transparent-bg weight300' id='ff2'>"+f4+"</div></a>"
+
+							function shuffle(array) {
+							  	var currentIndex = array.length, temporaryValue, randomIndex ;
+
+								while (0 !== currentIndex) {
+
+							    randomIndex = Math.floor(Math.random() * currentIndex);
+							    currentIndex -= 1;
+
+							    temporaryValue = array[currentIndex];
+							    array[currentIndex] = array[randomIndex];
+							    array[randomIndex] = temporaryValue;
+							  }
+
+							return array;
+							}
+
+							var arr = [ff1, ff2, ff3, ff4];
+							shuffle(arr);
+							$('#fragen').append(arr);
+	 					}
+	 				});
+	 			}
+	 		);
+
+			function pluspoints(){
+				$('#ff1').append('&nbsp; &nbsp;<i id="waiting" class="fa fa-wheelchair fa-spin"></i>');
+				$.ajax({
+					url: 'http://marcelkipp.com/quizapp/pluspoints.php?user_id='+localStorage.getItem('user_id'),
+					type: 'get',
+					cache: false,
+					success: function(data) {
+						$('#waiting').replaceWith('<i class="fa fa-check"></i>')
+						setTimeout(function(){ document.location = "afterfrage.html";},2000);
+					}
+				})
+			}
+
+			function plusnpqff2(){
+				$('#ff2').append('&nbsp; &nbsp;<i id="waiting" class="fa fa-spinner fa-spin"></i>');
+				$.ajax({
+					url: 'http://marcelkipp.com/quizapp/plusnpq.php?user_id='+localStorage.getItem('user_id'),
+					type: 'get',
+					cache: false,
+					success: function(data){
+						$('#waiting').replaceWith('<i class="fa fa-times"></i>')
+						setTimeout(function(){ document.location = "afterfrage.html";},2000);
+					}
+				});
+			}
+
+			function plusnpqff3(){
+				$('#ff3').append('&nbsp; &nbsp;<i id="waiting" class="fa fa-spinner fa-spin"></i>');
+				$.ajax({
+					url: 'http://marcelkipp.com/quizapp/plusnpq.php?user_id='+localStorage.getItem('user_id'),
+					type: 'get',
+					cache: false,
+					success: function(data){
+						$('#waiting').replaceWith('<i class="fa fa-times"></i>')
+						setTimeout(function(){ document.location = "afterfrage.html";},2000);
+					}
+				});
+			}	
+
+			function plusnpqff4(){
+				$('#ff3').append('&nbsp; &nbsp;<i id="waiting" class="fa fa-spinner fa-spin"></i>');
+				$.ajax({
+					url: 'http://marcelkipp.com/quizapp/plusnpq.php?user_id='+localStorage.getItem('user_id'),
+					type: 'get',
+					cache: false,
+					success: function(data){
+						$('#waiting').replaceWith('<i class="fa fa-times"></i>')
+						setTimeout(function(){ document.location = "afterfrage.html";},2000);
+					}
+				});
+			}	
+	// 		function(){
+	// 			var category_id = localStorage.getItem('category_id');
+	// 			alert(category_id);
+	// 			$.ajax({
+	// 				type: 'get',
+	// 				url: 'http://marcelkipp.com/quizapp/category_ausgabe.php?category_id='+category_id,
+	// 				dataType: 'json',
+	// 				async: false,
+	// 				success:function(data) {
+	// 					$(data).each(function(index,value){
+	// 						$('#headline').append(data.category_title);
+	// 					});
+	// 				}	
+	// 			});
+
+	// 			$.ajax({
+	// 				url: 'http://marcelkipp.com/quizapp/questioninfo.php?question_id='+localStorage.getItem('question_id'),
+	// 				dataType: 'json',
+	// 				type: 'get',
+	// 				cache: false,
+	// 				success:function(data) {
+	// 					$(data).each(function(index,value){
+	// 						$('#frage').append(value.question_text);
+	// 						$('#frage_bild').append('<div style="margin:0px auto; width:300px;height:300px;background-image:url(backend/upload/'+data.media+'.jpg);"></div>');
+
+	// 						var f1 = data.answer_id1;
+	// 						var f2 = data.answer_id2;
+	// 						var f3 = data.answer_id3;
+	// 						var f4 = data.answer_id4;
+
+	// 						var ff1 = "<a onClick='pluspoints()'><div class='antwort transparent-bg weight300' id='ff1'>"+f1+"</div></a>"
+	// 						var ff2 = "<a onClick='plusnpq()'><div class='antwort transparent-bg weight300' id='ff2'>"+f2+"</div></a>"
+	// 						var ff3 = "<a onClick='plusnpq()'><div class='antwort transparent-bg weight300' id='ff2'>"+f3+"</div></a>"
+	// 						var ff4 = "<a onClick='plusnpq()'><div class='antwort transparent-bg weight300' id='ff2'>"+f4+"</div></a>"
+
+	// 						function shuffle(array) {
+	// 						  	var currentIndex = array.length, temporaryValue, randomIndex ;
+
+	// 							while (0 !== currentIndex) {
+
+	// 						    randomIndex = Math.floor(Math.random() * currentIndex);
+	// 						    currentIndex -= 1;
+
+	// 						    temporaryValue = array[currentIndex];
+	// 						    array[currentIndex] = array[randomIndex];
+	// 						    array[randomIndex] = temporaryValue;
+	// 						  }
+
+	// 						return array;
+	// 						}
+
+	// 						var arr = [ff1, ff2, ff3, ff4];
+	// 						shuffle(arr);
+	// 						$('#fragen').append(arr);
+	// 					});
+	// 				}	
+	// 			});
+
+	// 		}
+		
+	// 	function pluspoints(){
+	// 		$('#ff1').append('&nbsp; &nbsp;<i id="waiting" class="fa fa-wheelchair fa-spin"></i>');
+	// 			$.ajax({
+	// 				url: 'backend/pluspoints.php?user_id='+localStorage.getItem('user_id'),
+	// 				type: 'get',
+	// 				cache: false,
+	// 				success: function(data) {
+	// 					$('#waiting').replaceWith('<i class="fa fa-check"></i>')
+	// 					setTimeout(function(){ document.location = "afterfrage.html";},2000);
+	// 				}, 
+	// 				error: function(data) {
+	// 				}
+	// 			})
+	// 	}
+
+	// 	function plusnpq(){
+	// 		$('#ff2').append('&nbsp; &nbsp;<i id="waiting" class="fa fa-spinner fa-spin"></i>');
+	// 		$.ajax({
+	// 			url: 'backend/plusnpq.php?user_id='+localStorage.getItem('user_id'),
+	// 			type: 'get',
+	// 			cache: false,
+	// 			success: function(data){
+	// 				$('#waiting').replaceWith('<i class="fa fa-times"></i>')
+	// 				setTimeout(function(){ document.location = "afterfrage.html";},2000);
+	// 			}
+	// 		})
+	// 	}
+	</script>
+	</body>
+</html>

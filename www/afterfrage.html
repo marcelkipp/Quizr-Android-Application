@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/sidebar.css"/>
+		<link href="css/examples.css" rel="stylesheet" type="text/css"/>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+		<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" type="text/css"/>
+		<script src="phonegap.js" type="text/javascript"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script type="text/javascript" src="cordova.js"></script>
+		
+		<script>
+		$(document).ready(function(){
+			$.ajax({
+				url: 'http://marcelkipp.com/quizapp/questioninfo.php?question_id='+localStorage.getItem('question_id'),
+				dataType: 'json',
+				type: 'get',
+				cache: false,
+				success:function(data) {
+					$(data).each(function(index,value){
+						$('#a1').append(data.answer_text+'<span class="entypo-down-open-mini">');
+						$('#a1dd').append(data.answer_explanation);
+						$('#a2').append(data.answer_id2);
+						$('#a3').append(data.answer_id3);
+						$('#a4').append(data.answer_id4);
+					});
+				}	
+			});
+		});
+		</script>
+
+		 <script type="text/javascript">
+			$(document).ready(function(){
+				$("dt").click(function(){ // trigger 
+					$(this).next("dd").slideToggle("fast"); // blendet beim Klick auf "dt" die nächste "dd" ein. 
+				});
+			});
+		</script>
+
+		<script type="text/javascript">
+		function shuffle(){
+			$.ajax ({
+				url: 'http://marcelkipp.com/quizapp/shuffle.php?category_id='+localStorage.getItem('category_id'),
+				dataType: 'json',
+				type: 'get',
+				cache: false,
+				success:function(data) {
+					$(data).each(function(index,value){
+						console.log('question_id= '+data.question_id);
+						localStorage.setItem('question_id', data.question_id);
+						window.location.href="index.html";
+					});
+				}
+			});
+		};
+	</script>
+
+	</head>
+	<body>
+		<div class="wrapper">
+			<!--<div class="header">
+				<a href="#" class="jsc-sidebar-trigger"><span class="fontawesome-reorder"></span></a>
+				<span></span>
+			</div>-->
+			<div id="afterfrage_bewertung" class="headline weight300">Frage bewerten:</div>
+				
+			<div class="bewertung">
+				<div class="weight300">Negativ</div>
+				<div class="weight300">Neutral</div>
+				<div class="weight300">Positiv</div>
+			</div>
+			<div style="clear:both;"></div>
+
+			<form action="">
+					<div><input type="radio" id="c1" name="bewertung" value="Nagativ"><label for="c1">&nbsp;</label></div>
+					<div><input type="radio" id="c2" name="bewertung" value="Neutral"><label for="c2" checked >&nbsp;</div>
+					<div><input type="radio" id="c3" name="bewertung" value="Positiv"><label for="c3">&nbsp;</div>
+				</form>
+				<div style="clear:both;"></div>
+
+	      		<div class="richtige_antwort transparent-bg" id="ausklappen">
+	      			<span>Richtige Antwort</span>
+					<dt><p id="a1"></span></p></dt>
+					<dd id="a1dd"></dd>
+				</div>
+			
+			<!--<div class="dreieck-gruen"></div>-->	
+
+			<div class="falsche_antwort transparent-bg">
+				<span>Falsche Antworten</span>
+				<dt><p id="a2"></span></p></dt>
+				<hr> <!--Trennlinie-->
+				<dt><p id="a3"></span></p ></dt>
+				<hr> <!--Trennlinie-->
+				<dt><p id="a4"></span></p></dt>
+			</div>
+			<a href="#" onclick="shuffle()"><div class="button_nf antwort">Nächste Frage</div></a>
+			<a href="menu.html"class="afterfrage_mb"><div >Menü</div></a>
+
+	</body>
+</html>

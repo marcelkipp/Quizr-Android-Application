@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/sidebar.css"/>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700' rel='stylesheet' type='text/css'>
+		<script src="phonegap.js" type="text/javascript"></script>
+		 <script type="text/javascript" src="cordova.js"></script>
+	</head>
+
+	<body>
+
+		<div class="wrapper">
+			<div class="headline weight300">Kategorie wählen</div>
+			<div id="wrapper-category" class="subheadline weight300">Wählen Sie bitte eine Kategorie aus in der Sie Fragen beantworten möchten</div>
+		</div>	
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		function selectcategory(category_id){
+			console.log('selecting catgory '+category_id);
+			var postdata = 'user_id='+localStorage.getItem('user_id')+'&session_id='+localStorage.getItem('session_id')+'&category_id='+category_id;
+			$.ajax({
+				contentType: 'application/x-www-form-urlencoded',
+				url: 'backend/select_category.php',
+				dataType: 'json',
+				type: 'post',
+				data: postdata, 
+				cache: false,
+				success:function(data) {
+					localStorage.setItem('category_id', data.category_id);
+					console.log("Stored category: "+data.category_id);
+					window.location.href="menu.html";
+				}
+			});
+			
+		}
+		</script>
+
+		<script>
+		$( document ).ready(function () {
+			console.log('document ready!')
+			$.ajax({
+				url: 'backend/categories.php',
+				dataType: 'json',
+				type: 'get',
+				cache: false,
+				success:function(data) {
+					$(data).each(function(index,value){
+						console.log("JSON erfolgreich ausgelesen!");
+						$('#wrapper-category').append( 
+							$("<div onclick='selectcategory("+value.category_id+")'><div class='kategorie weight300'>"+value.category_title+"</div><div class='weight300 kategorie_sub'>"+value.category_description+"</div></div>")
+							);
+					});
+				}
+			});
+			$("#wrapper-category").append('<div style="color:#ffffff;font-size:15px;margin:30px 0px;"><a style="color:#ffffff; font-weight:700;" href="menu.html">Menu</a></div>');
+		});
+		</script>
+	</body>
+</html>
