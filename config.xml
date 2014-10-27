@@ -9,5 +9,5 @@
     </author>
     <content src="menu.html" />
     <access origin="*" />
-	<icon src="img/quiz-icon.png" />
+	<icon src="/www/img/quiz-icon.png" />
 </widget>

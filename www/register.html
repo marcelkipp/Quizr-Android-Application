@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
@@ -8,6 +8,7 @@
 		<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
 		<script src="phonegap.js" type="text/javascript"></script>
 		 <script type="text/javascript" src="cordova.js"></script>
+		 <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 	</head>
 
 	<body style="background-image:url(img/blurred.png);">
@@ -44,81 +45,39 @@
 		}
 
 
-			var pictureSource;   // picture source
-		    var destinationType; // sets the format of returned value 
+			var pictureSource;   
+		    var destinationType; 
 		 
-		    // Wait for PhoneGap to connect with the device
-		    //
 		    document.addEventListener("deviceready",onDeviceReady,false);
 		 
-		    // PhoneGap is ready to be used!
-		    //
 		    function onDeviceReady() {
 		        pictureSource=navigator.camera.PictureSourceType;
 		        destinationType=navigator.camera.DestinationType;
 		    }
-		 
-		    // Called when a photo is successfully retrieved
-		    //
+
 		    function onPhotoDataSuccess(imageData) {
-		      // Get image handle
-		      //
+
 		      var smallImage = document.getElementById('smallImage');
-		 
-		      // Unhide image elements
-		      //
+
 		      smallImage.style.display = 'block';
-		 
-		      // Show the captured photo
-		      // The inline CSS rules are used to resize the image
-		      //
 		      smallImage.src = "data:image/jpeg;base64," + imageData;
 		    }
-		    
-			// Called when a photo is successfully retrieved
-		    //
+
 		    function onPhotoFileSuccess(imageData) {
-		      // Get image handle
+
 		      console.log(JSON.stringify(imageData));
-		      
-		   	  // Get image handle
-		      //
+
 		      var smallImage = document.getElementById('smallImage');
-		 
-		      // Unhide image elements
-		      //
 		      smallImage.style.display = 'block';
-		 
-		      // Show the captured photo
-		      // The inline CSS rules are used to resize the image
-		      //
 		      smallImage.src = imageData;
 		    }
 		 
-		    // Called when a photo is successfully retrieved
-		    //
 		    function onPhotoURISuccess(imageURI) {
-		      // Uncomment to view the image file URI 
-		      // console.log(imageURI);
-		 
-		      // Get image handle
-		      //
-		      var largeImage = document.getElementById('largeImage');
-		 
-		      // Unhide image elements
-		      //
-		      largeImage.style.display = 'block';
-		 
-		      // Show the captured photo
-		      // The inline CSS rules are used to resize the image
-		      //
+		      var largeImage = document.getElementById('smallImage');
 		      largeImage.src = imageURI;
 		    }
 		 
-		    // A button will call this function
-		    //
 		    function capturePhotoWithData() {
-		      // Take picture using device camera and retrieve image as base64-encoded string
 		      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50 });
 		    }
 		 
@@ -138,8 +97,33 @@
 		    // Called if something bad happens.
 		    // 
 		    function onFail(message) {
-		      // alert('Failed because: ' + message);
+		      alert('Failed because: ' + message);
 		    }
+
+		    function uploadPhoto(){
+		    	var imageURI = document.getElementById('smallImage').getAttribute("src");
+		    	if (!imageURI) {
+		    		alert('Bitte erst ein Bild auswählen');
+		    	}
+
+		    	var ft = new FileTransfer();
+        		ft.upload(imageURI, encodeURI("http://marcelkipp.com/quizapp/upload_userpicture.php"), win, fail);
+		    }
+
+		    function win(r) {
+		        console.log("Code = " + r.responseCode);
+		        console.log("Response = " + r.response);
+		        //alert("Response =" + r.response);
+		        console.log("Sent = " + r.bytesSent);
+		    }
+
+		    function fail(error) {
+		        alert("An error has occurred: Code = " + error.code);
+		        console.log("upload error source " + error.source);
+		        console.log("upload error target " + error.target);
+		    }
+
+    </script>
 		</script>
 
 		<div class="logo">
@@ -150,17 +134,48 @@
 			<input id="username" name="username" placeholder="Benutzername"><br>
 			<input id="email" name="email" placeholder="E-Mail"><br>
 			<input id="password" name="password" type="password" placeholder="Passwort"><br>
+			<br/>
+			<span style="color:#fff;">Profilbild wählen</span><br/>
 			<!--<input id="datei" name="name" type="file" name="datei" value="durchsuchen">-->
+			<div style="width:302px;margin:0px auto;">
+				<img style="display:display;width:150px;height:150px;margin:10px 0;float:left;" id="smallImage" src="img/default-user.png" />
+				<div style="width:140px;color:#ffffff;float:left;height:70px;margin:10px 12px 0 0;">
+					<div onclick="capturePhotoWithFile();" style="width:100%;padding-top:25px;">
+						<div style="width:50%;float:left;text-align:center;">
+							<i style="font-size:25px;color:#fff;height:70px;" class="fa fa-camera"></i>
+						</div>
+						<div style="width:50%;float:left;text-align:center;">
+							Kamera
+						</div>
+						<div style="clear:both;"></div>  
+					</div>
+					<div  onclick="getPhoto(pictureSource.PHOTOLIBRARY);" style="width:100%;">
+						<div style="width:50%;float:left;text-align:center;">
+							<i style="font-size:25px;color:#fff;height:70px;" class="fa fa-folder-open"></i>
+						</div>
+						<div style="width:50%;float:left;text-align:center;">
+							Album 
+						</div>
+						<div style="clear:both;"></div>  
+					</div>
+					<div style="clear:both;"></div>  
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+			
 			<br>
 			<input class="anmelde-button" type="button" value="Registrieren" onclick="login()"/>
+			<input class="anmelde-button" type="button" value="upload" onclick="uploadPhoto()"/>
+
 		</form>
 		<div id="element">
 			
 		</div>
-	    <button onclick="capturePhotoWithFile();">Capture Photo With Image File URI</button> <br>
+	    <!-- <button onclick="capturePhotoWithFile();">Capture Photo With Image File URI</button> <br>
 	    <button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
-	    <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
 	    <img style="display:none;width:200px;height:200px;" id="smallImage" src="" />
-	    <img style="display:none;" id="largeImage" src="" />
+	    <img style="display:none;" id="largeImage" src="" /> -->
+	    <!-- <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br> -->
+	    
 	</body>
 </html>

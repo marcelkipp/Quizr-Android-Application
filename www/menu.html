@@ -4,6 +4,12 @@
 		if (!(localStorage.getItem('session_id') && localStorage.getItem('user_id'))) {
 			window.location.href="login.html";
 		}
+		// alert(localStorage.getItem('username'));//debug
+		// alert(localStorage.getItem('role'));//debug
+		// alert(localStorage.getItem('category_id'));//debug
+		// alert(localStorage.getItem('points'));//debug
+		// alert(localStorage.getItem('number_pq'));//debug
+		// alert(localStorage.getItem('avatar'));//debug
 	</script>
 	<script src="js/jquery-1.11.1.min.js" type="text/javascript"></script>
 	<head>
@@ -16,6 +22,7 @@
 		<link href='http://fonts.googleapis.com/css?family=Exo+2:400,100,200' rel='stylesheet' type='text/css'>
 		<script src="phonegap.js" type="text/javascript"></script>
 		 <script type="text/javascript" src="cordova.js"></script>
+		 <script type="text/javascript" src="js/quo.js"></script>
 	</head>
 	<body>
 		<div id="meldung"></div>
@@ -33,7 +40,9 @@
 				<a onclick="shuffle()" href="#"><div>Spielen</div></a>
 				<a href="kategorien.html"><div>Kategorie wählen</div></a>
 				<a href="#" onclick="randomCategory()"><div>Zufällige Kategorie spielen</div></a>
+				
 				<hr>
+				<div id="adminfunction"></div>
 				<a href="editor_category.html"><div>Kategorie erstellen</div></a>
 				<a href="editor_question.html"><div>Frage erstellen</div></a>
 				<a href="#" onclick="logout()"><div>Abmelden</div></a>
@@ -42,21 +51,24 @@
 
 	
 	<script>
+	$$('body').rotateLeft(function(){
+		alert('hallo');
+	});
 		$(document).ready(
 			function(){
-				// alert(localStorage.category_title);
-				var category = localStorage.category_title;
-				if (localStorage.category==null) category = "Keine Kategorie gewählt";
-				$('#element').prepend("<div><img src='img/west.png' alt='"+localStorage.username+"'></div><a href='#'><div class='menu_username nopointer'>Eingeloggt als:</div></a><a href='#'><div class='menu_username bold nopointer'  style='margin-bottom:5px;'>"+localStorage.username+"&nbsp;("+localStorage.role+")</div></a>")
-				$('#element2').append("<a href='#'><div class='menu_username nopointer'>"+localStorage.points+"&nbsp;Punkte</div></a>"+
-						"<a href='#'><div class='menu_username nopointer'>"+localStorage.total_questions+"&nbsp;gespielte Fragen</div></a>");
+				var number_pq = localStorage.number_pq;
+				if (number_pq==null) number_pq = "Keine Kategorie gewählt";
+				// alert(localStorage.number_pq);
+				// alert(number_pq);
+				$('#element').prepend("<div><img src='img/west.png' alt='"+localStorage.username+"'></div><div class='menu_username bold nopointer withe'  style='margin-bottom:5px;'>"+localStorage.username+"&nbsp;("+localStorage.role+")</div>")
+				$('#element2').append("<div class='menu_username nopointer withe'>"+localStorage.points+"&nbsp;Punkte</div>"+
+						"<div class='menu_username nopointer withe'>"+number_pq+"&nbsp;gespielte Fragen</div>");
 			}
 		);
 
 		$(document).ready(
 			function(){
 				var category_id = localStorage.getItem('category_id');
-				// alert(category_id); //debug
 				$.ajax({
 					type: "GET",
 					url: "http://marcelkipp.com/quizapp/category_ausgabe.php?category_id="+category_id,
@@ -65,9 +77,8 @@
 					success: function(data){
 						var category_title = data.category_title;
 						localStorage.setItem('category_title', data.category_title);
-						// alert(category_title);
-						// alert(data.category_title); //debug
-						$("#element").append("<a href='#'><div class='menu_username nopointer' id='category_title'>Aktuelle Kategorie:&nbsp;"+data.category_title+"</div></a><i id='refresher' onClick='refreshuserinfo()' class='fa fa-refresh refresh'></i>");
+						if (category_title==null) category_title = "Keine Kategorie gewählt";
+						$("#element").append("<div class='menu_username nopointer withe' id='category_title'>Aktuelle Kategorie:&nbsp;"+category_title+"</div><i id='refresher' onClick='refreshuserinfo()' class='fa fa-refresh refresh'></i>");
 					}
 				});
 			}
@@ -78,9 +89,9 @@
 			var user_id = localStorage.getItem('user_id');
 			var session_id = localStorage.getItem('session_id');
 			var category_id = localStorage.getItem('category_id');
-			alert(user_id); //debug
-			alert(session_id); //debug
-			alert(category_id); //debug
+			// alert(user_id); //debug
+			// alert(session_id); //debug
+			// alert(category_id); //debug
 			window.location.href="menu.html";
 		}
 
@@ -149,7 +160,7 @@
 			type: "GET",
 			url: "http://marcelkipp.com/quizapp/userinfo.php?user_id="+user_id,
 			async: false,
-			dataType: "json",
+			dataType: "json",   
 			success: function(data){
 				var category = data.category_title;
 				var atext = "Keine Kategorie gewählt";
@@ -163,7 +174,7 @@
 				// alert(localStorage.getItem('category_title')); //debug 
 				
 				$('#category_title').empty();
-				$('#category_title').append("Aktuelle Kategorie:"+ category);
+				$('#category_title').append("Aktuelle Kategorie:&nbsp;"+ category);
 				$('#element2').empty();
 				$('#element2').append("<a href='#'><div class='menu_username nopointer'>"+localStorage.points+"&nbsp;Punkte</div></a>"+
 					"<a href='#'><div class='menu_username nopointer'>"+localStorage.total_questions+"&nbsp;gespielte Fragen</div></a>");

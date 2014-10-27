@@ -10,7 +10,9 @@
 body {
 	margin:0px;
 	font-family: 'Exo 2', sans-serif;
-	 background: url(../img/blurred.png) no-repeat center center fixed; 
+	background: url(../img/blurred.png);
+	background-repeat:no-repeat;
+	background-position: center center; 
 }
 
 ::-webkit-input-placeholder {color:#fff;}
@@ -68,11 +70,16 @@ input, button, textarea {
 }
 
 .bold {
-	font-weight:700;
+	font-weight:700!important;
 }
 
 .nopointer {
 	cursor:default;
+}
+
+.withe {
+	color: #fff;
+	font-weight: 200;
 }
 
 .transparent-bg {

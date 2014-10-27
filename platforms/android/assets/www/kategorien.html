@@ -20,39 +20,31 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script type="text/javascript">
 		function selectcategory(category_id){
-			console.log('selecting catgory '+category_id);
-			var postdata = 'user_id='+localStorage.getItem('user_id')+'&session_id='+localStorage.getItem('session_id')+'&category_id='+category_id;
+			var user_id = localStorage.getItem('user_id');
+			var session_id = localStorage.getItem('session_id');
 			$.ajax({
-				contentType: 'application/x-www-form-urlencoded',
-				url: 'backend/select_category.php',
+				url: 'http://marcelkipp.com/quizapp/select_category.php?user_id='+user_id+'&session_id='+session_id+'&category_id='+category_id,
 				dataType: 'json',
-				type: 'post',
-				data: postdata, 
+				type: 'GET', 
 				cache: false,
 				success:function(data) {
 					localStorage.setItem('category_id', data.category_id);
-					console.log("Stored category: "+data.category_id);
-					window.location.href="menu.html";
+					window.location.href="menu.html"; // Weiterleitung
 				}
 			});
 			
 		}
-		</script>
 
-		<script>
 		$( document ).ready(function () {
-			console.log('document ready!')
 			$.ajax({
-				url: 'backend/categories.php',
+				url: 'http://marcelkipp.com/quizapp/categories.php',
 				dataType: 'json',
 				type: 'get',
 				cache: false,
 				success:function(data) {
 					$(data).each(function(index,value){
-						console.log("JSON erfolgreich ausgelesen!");
 						$('#wrapper-category').append( 
-							$("<div onclick='selectcategory("+value.category_id+")'><div class='kategorie weight300'>"+value.category_title+"</div><div class='weight300 kategorie_sub'>"+value.category_description+"</div></div>")
-							);
+							"<div onclick='selectcategory("+value.category_id+")'><div class='kategorie weight300'>"+value.category_title+"</div><div class='weight300 kategorie_sub'>"+value.category_description+"</div></div>");
 					});
 				}
 			});
